@@ -5,10 +5,11 @@ try {
 } catch (_) {}
 
 const viewPortConfig = {
-  url: 'https://de.wikipedia.org/wiki/Tiger',
-  rect: { x: 1169, y: 1, pageX: 1808, pageY: 155 },
-  browserSettings: { innerWidth: 1833, innerHeight: 971, scrollTop: 0, scrollLeft: 0 }
+  url: 'https://soundcloud.com/discover',
+  rect: { x: 74, y: 912, pageX: 1301, pageY: 970 },
+  browserSettings: { innerWidth: 1443, innerHeight: 971, scrollTop: 0, scrollLeft: 0 }
 }
+
 
 const rect = viewPortConfig.rect;
 const width = rect.pageX - rect.x;
@@ -16,9 +17,11 @@ const height = rect.pageY - rect.y;
 
 const innerWidth = viewPortConfig.browserSettings.innerWidth;
 const innerHeight = viewPortConfig.browserSettings.innerHeight;
+const scrollLeft = viewPortConfig.browserSettings.scrollLeft;
+const scrollTop = viewPortConfig.browserSettings.scrollTop;
 
 const createView = () => {
-    const win = new BrowserWindow({ x: 5000, y: 5000, width: 1000, height: 500 });
+    const win = new BrowserWindow({ x: 5000, y: 5000, width: 1500, height: 500 });
 
     const view = new BrowserView();
     // win.addBrowserView(view)
@@ -35,20 +38,20 @@ const createView = () => {
     const secondView = new BrowserView({
         webPreferences: {
             nodeIntegration: true,
-            // https://www.electronjs.org/docs/api/webview-tag
-            webviewTag: true, // Security warning since Electron 10
+            webviewTag: true,
             zoomFactor: 1.0,
             enableRemoteModule: true,
         },
     });
     win.addBrowserView(secondView);
-    secondView.setBounds({ x: 0, y: 0, width: width, height: height });
-    secondView.webContents.loadURL('file://' + __dirname + '/index.html');
+    secondView.setBounds({ x: 0, y: 0, width: width+16, height: height });
+    secondView.webContents.loadURL(
+        `file://${__dirname}/index.html?innerWidth=${innerWidth}&innerHeight=${innerHeight}&scrollLeft?${scrollLeft}&scrollTop?${scrollTop}&url=${viewPortConfig.url}`
+    );
 
     const contents = secondView.webContents;
     contents.on('did-finish-load', async () => {
-        contents.executeJavaScript('window.scroll(500, 200) ', true);
-        contents.executeJavaScript(`window.scrollTo(${rect.x}, ${rect.y}) `, true)
+        contents.executeJavaScript(`window.scrollTo(${rect.x}, ${rect.y}) `, true);
 
         contents.executeJavaScript('document.body.style.overflow = "hidden";', true);
         contents.executeJavaScript('document.querySelector("html").scrollTop = window.scrollY;', true);
@@ -66,35 +69,34 @@ app.whenReady().then(createView);
 // let mainWindow;
 // let initPath;
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
 // app.allowRendererProcessReuse = true;
-// app.on("ready", () => {
+// app.on('ready', () => {
+//     // https://www.electronjs.org/docs/api/browser-window#class-browserwindow
+//     mainWindow = new BrowserWindow({
+//         width: 1024,
+//         height: 768,
+//         //titleBarStyle: 'hidden',
+//         //frame: false,
+//         backgroundColor: '#fff',
+//         webPreferences: {
+//             nodeIntegration: true,
+//             // https://www.electronjs.org/docs/api/webview-tag
+//             webviewTag: true, // Security warning since Electron 10
+//             zoomFactor: 1.0,
+//             enableRemoteModule: true,
+//         },
+//     });
 
-//   // https://www.electronjs.org/docs/api/browser-window#class-browserwindow
-//   mainWindow = new BrowserWindow({
-//     width: 1024,
-//     height: 768,
-//     //titleBarStyle: 'hidden',
-//     //frame: false,
-//     backgroundColor: "#fff",
-//     webPreferences: {
-//       nodeIntegration: true,
-//       // https://www.electronjs.org/docs/api/webview-tag
-//       webviewTag: true, // Security warning since Electron 10
-//       zoomFactor: 1.0,
-//       enableRemoteModule: true,
-//     },
-//   });
-
-//   mainWindow.loadURL("file://" + __dirname + "/index.html");
+//     mainWindow.loadURL(
+//         `file://${__dirname}/index.html?innerWidth=${innerWidth}&innerHeight=${innerHeight}&scrollLeft?${scrollLeft}&scrollTop?${scrollTop}&url=${viewPortConfig.url}`
+//     );
 // });
 
 // // Quit when all windows are closed.
-// app.on("window-all-closed", () => {
-//   data = {
-//     bounds: mainWindow.getBounds(),
-//   };
-//   fs.writeFileSync(initPath, JSON.stringify(data));
-//   app.quit();
+// app.on('window-all-closed', () => {
+//     data = {
+//         bounds: mainWindow.getBounds(),
+//     };
+//     fs.writeFileSync(initPath, JSON.stringify(data));
+//     app.quit();
 // });

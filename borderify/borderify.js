@@ -42,8 +42,8 @@ document.body.addEventListener('mouseup', (e) => {
         url: window.location.href,
         rect,
         browserSettings: {
-            innerWidth: document.body.clientWidth,
-            innerHeight: document.body.clientHeight,
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
             scrollTop: document.documentElement.scrollTop,
             scrollLeft: document.documentElement.scrollLeft,
         },
