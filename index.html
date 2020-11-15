@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            const viewPortConfig = {
+                url: 'https://de.wikipedia.org/wiki/Tiger',
+                rect: { x: 1169, y: 1, pageX: 1808, pageY: 155 },
+                browserSettings: { innerWidth: 1833, innerHeight: 971, scrollTop: 0, scrollLeft: 0 },
+            };
+
+            const innerWidth = viewPortConfig.browserSettings.innerWidth;
+            const innerHeight = viewPortConfig.browserSettings.innerHeight;
+        </script>
+
+        <webview id="wv1"></webview>
+        <script>
+            var webview = document.getElementById('wv1');
+            webview.addEventListener('dom-ready', function () {
+                webview.insertCSS(`html, body {position: relative; width: ${innerWidth}px; height:${innerHeight}px }`);
+                webview.executeJavaScript(`window.scrollTo(${rect.x}, ${rect.y}) `, true);
+            });
+
+            webview.src = viewPortConfig.url;
+            webview.style.width = innerWidth + 'px';
+            webview.style.height = innerHeight + 'px';
+        </script>
+        <div></div>
+    </body>
+</html>
