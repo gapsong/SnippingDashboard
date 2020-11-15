@@ -1,0 +1,1 @@
+Snippings out the viewport of a website you like
