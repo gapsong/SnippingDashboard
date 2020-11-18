@@ -1,31 +1,62 @@
 var isHover = false;
-
-const createviewport = (rect) => {
-    const viewport = document.createElement('div');
-    viewport.id = `custom-viewport`;
-    viewport.style.position = 'absolute';
-    viewport.style.border = 'solid';
-    viewport.style.width = rect.pageX - rect.x + 'px';
-    viewport.style.height = rect.pageY - rect.y + 'px';
-    viewport.style.left = rect.x + 'px';
-    viewport.style.top = rect.y + 'px';
-    viewport.style.zIndex = '500';
-
-    viewport.addEventListener('mouseover', mouseOver);
-    viewport.addEventListener('mouseout', mouseOut);
-
-    function mouseOver() {
-        isHover = true;
-    }
-
-    function mouseOut() {
-        isHover = false;
-    }
-
-    return viewport;
+var rect = {
+    x: 0,
+    y: 0,
+    pageX: 100,
+    pageY: 100,
 };
 
-const updateviewport = (rect) => {
+const createViewport = () => {
+    const VIEWPORT_ID = 'custom-viewport';
+    if (document.getElementById(VIEWPORT_ID) == null) {
+        const viewport = document.createElement('div');
+        viewport.id = VIEWPORT_ID;
+        viewport.style.position = 'absolute';
+        viewport.style.border = 'solid';
+        viewport.style.width = rect.pageX - rect.x + 'px';
+        viewport.style.height = rect.pageY - rect.y + 'px';
+        viewport.style.left = rect.x + 'px';
+        viewport.style.top = rect.y + 'px';
+        viewport.style.zIndex = '500';
+        function mouseOver() {
+            isHover = true;
+        }
+
+        function mouseOut() {
+            isHover = false;
+        }
+        viewport.addEventListener('mouseover', mouseOver);
+        viewport.addEventListener('mouseout', mouseOut);
+
+        document.body.appendChild(viewport);
+    }
+};
+
+const createMenu = () => {
+    const BUTTON_ID = 'button-id';
+    if (document.getElementById(BUTTON_ID) == null) {
+        const button = document.createElement('input');
+        button.id = BUTTON_ID;
+        button.type = 'button';
+        button.value = 'text';
+        button.style.position = 'absolute';
+        button.style.left = '0px';
+        button.style.top = '0px';
+        button.style.zIndex = '500';
+        button.addEventListener('click', function () {
+            document.documentElement.style.cursor = 'crosshair';
+            console.log('crosshair');
+        });
+        document.body.appendChild(button);
+    }
+};
+
+const init = () => {
+    createMenu();
+    createViewport();
+};
+
+const updateViewport = (rect) => {
     const viewport = document.getElementById('custom-viewport');
     viewport.style.width = rect.pageX - rect.x + 'px';
     viewport.style.height = rect.pageY - rect.y + 'px';
@@ -34,48 +65,17 @@ const updateviewport = (rect) => {
     return viewport;
 };
 
-var rect = {
-    x: 0,
-    y: 0,
-    pageX: 100,
-    pageY: 100,
-};
-
-const createMenu = () => {
-    const button = document.createElement('input');
-    button.id = 'start-button';
-    button.type = 'button';
-    button.value = 'text';
-    button.style.position = 'absolute';
-    button.style.left = '0px';
-    button.style.top = '0px';
-    button.style.zIndex = '500';
-    button.addEventListener('click', function () {
-        document.documentElement.style.cursor = 'crosshair';
-    });
-    return button;
-};
-
-const init = () => {
-    document.body.appendChild(createMenu());
-
-    const temp = document.getElementById('my-element-handler');
-    if (temp == null) {
-        document.body.appendChild(createviewport(rect));
-    }
-};
-
 document.body.addEventListener('mousedown', (e) => {
     if (!isHover) {
         rect = { ...rect, x: e.pageX, y: e.pageY };
-        updateviewport({ x: 0, y: 0, pageX: 0, pageY: 0 });
+        updateViewport({ x: 0, y: 0, pageX: 0, pageY: 0 });
     }
 });
 
 document.body.addEventListener('mouseup', (e) => {
     if (!isHover) {
         rect = { ...rect, pageX: e.pageX, pageY: e.pageY };
-        updateviewport(rect);
+        updateViewport(rect);
         const body = {
             url: window.location.href,
             rect,
@@ -99,11 +99,6 @@ const postViewport = (body) =>
         },
         body: JSON.stringify(body),
     });
-
-init();
-
-// Make the DIV element draggable:
-dragElement(document.getElementById('custom-viewport'));
 
 function dragElement(elmnt) {
     var pos1 = 0,
