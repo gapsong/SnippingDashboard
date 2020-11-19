@@ -1,19 +1,14 @@
 const { BrowserView, BrowserWindow, app } = require('electron');
 
-try {
-    require('electron-reloader')(module);
-} catch (_) {}
-
 const viewPortConfig = {
-  url: 'https://soundcloud.com/discover',
-  rect: { x: 74, y: 912, pageX: 1301, pageY: 970 },
-  browserSettings: { innerWidth: 1443, innerHeight: 971, scrollTop: 0, scrollLeft: 0 }
-}
-
+    url: 'https://stackoverflow.com/questions/8529070/remove-portion-of-string-in-javascript',
+    rect: { width: '1516px', height: '123px', x: 31, y: 311 },
+    browserSettings: { innerWidth: 1848, innerHeight: 756, scrollTop: 0, scrollLeft: 0 },
+};
 
 const rect = viewPortConfig.rect;
-const width = rect.pageX - rect.x;
-const height = rect.pageY - rect.y;
+const width = parseInt(viewPortConfig.rect.width, 10);
+const height = parseInt(viewPortConfig.rect.height,10);
 
 const innerWidth = viewPortConfig.browserSettings.innerWidth;
 const innerHeight = viewPortConfig.browserSettings.innerHeight;
@@ -23,7 +18,7 @@ const scrollTop = viewPortConfig.browserSettings.scrollTop;
 const createView = () => {
     const win = new BrowserWindow({ x: 5000, y: 5000, width: 1500, height: 500 });
 
-    const view = new BrowserView();
+    // const view = new BrowserView();
     // win.addBrowserView(view)
 
     // view.setBounds({ x: 0, y: 0, width: width, height: height })
@@ -44,7 +39,7 @@ const createView = () => {
         },
     });
     win.addBrowserView(secondView);
-    secondView.setBounds({ x: 0, y: 0, width: width+16, height: height });
+    secondView.setBounds({ x: 0, y: 0, width: width + 16, height: height });
     secondView.webContents.loadURL(
         `file://${__dirname}/index.html?innerWidth=${innerWidth}&innerHeight=${innerHeight}&scrollLeft?${scrollLeft}&scrollTop?${scrollTop}&url=${viewPortConfig.url}`
     );
@@ -58,8 +53,8 @@ const createView = () => {
     });
 
     app.on('window-all-closed', () => {
-        // win.removeBrowserView(secondView)
-        win.removeBrowserView(view);
+        win.removeBrowserView(secondView)
+        // win.removeBrowserView(view);
         app.quit();
     });
 };
